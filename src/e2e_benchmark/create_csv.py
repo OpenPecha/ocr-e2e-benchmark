@@ -1,13 +1,23 @@
 import os
 import json
 import csv
+import logging
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 
-URL_PREFIX = "https://s3.amazonaws.com/monlam.ai.ocr/e2e_benchmark/"
+URL_PREFIX = "https://s3.amazonaws.com/monlam.ai.ocr/e2e_benchmark/cr/"
 GROUP_ID = 1
 BATCH_ID = 1
 STATE = "post_correction"
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("script.log"),
+        logging.StreamHandler()
+    ]
+)
 
 
 def read_jsonl(file_path):
@@ -32,7 +42,7 @@ def process_matching_lines(group, split_id):
 
     for item in group:
         if 'line' not in item:
-            print(f"Warning: Missing 'line' key for ID {item.get('id', 'unknown')}")
+            logging.warning(f"Missing 'line' key for ID {item.get('id', 'unknown')}")
             continue
 
         coordinates = '_'.join(item['id'].split('_')[1:])
@@ -58,7 +68,7 @@ def process_mismatched_lines(split_id, text_dir):
     """Process groups where the line count does not match the line values."""
     text_file_path = os.path.join(text_dir, f"{split_id}.txt")
     if not os.path.exists(text_file_path):
-        print(f"Warning: Text file for {split_id} not found.")
+        logging.warning(f"Text file for {split_id} not found.")
         return []
 
     # Read the text file and split into lines
@@ -96,7 +106,7 @@ def process_jsonl_file(args):
 
     for item in jsonl_data:
         if 'id' not in item or 'line' not in item:
-            print(f"Warning: Missing required keys in {jsonl_file}: {item}")
+            logging.warning(f"Missing required keys in {jsonl_file}: {item}")
             continue
 
     # Group by split ID
