@@ -6,9 +6,10 @@ from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 
 URL_PREFIX = "https://s3.amazonaws.com/monlam.ai.ocr/e2e_benchmark/cr/"
-GROUP_ID = 1
+GROUP_ID = 15
 BATCH_ID = 1
 STATE = "post_correction"
+
 
 logging.basicConfig(
     level=logging.INFO,

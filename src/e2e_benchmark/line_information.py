@@ -14,7 +14,6 @@ def process_jsonl(jsonl_file, txt_dir):
     for line in lines:
         json_obj = json.loads(line.strip())
 
-        # Check if "accept" key exists and its value is [2]
         if json_obj.get("accept") == [2]:
             json_id = json_obj.get('id', '').split('_')[0]
             txt_file_path = f'{txt_dir}/{json_id}.txt'
